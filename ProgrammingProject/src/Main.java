@@ -545,7 +545,7 @@ public class Main {
                                             System.out.println("Not enough stock! Action cannot be done");
                                         break;
                                 }
-                                System.out.println("What do you want to do next")
+                                System.out.println("What do you want to do next");
                             } else { //decrease stock
                              System.out.println("Decrease by how many:");
                              int takeaway = input.nextInt();
