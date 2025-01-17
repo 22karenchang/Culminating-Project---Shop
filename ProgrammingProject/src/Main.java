@@ -35,8 +35,9 @@ public class Main {
         boolean checker = true;
         System.out.println("Hello and welcome to ShopTopia!"); //-------------------------------------
         System.out.println("On ShopTopia, customers can make decisions using the " +
-                "numbers in front of each option." +
-                "Ex. 1. Footwear --> type: 1");
+                "numbers in front of each option. Ex. 1. Footwear --> type: 1");
+        System.out.println("Note: Please be careful when you are inputting your values! " +
+                "Anything other than numbers (like letters/words) will cause problems! *except for passwords*");
         while (nextChoice == 4) {
         System.out.println("Choose a Mode to log into: 1. Admin  2. User  3. Exit Shop");
         int mode = input.nextInt();
@@ -93,20 +94,20 @@ public class Main {
                             }
                         }
                     }
-                    System.out.println("Which order number would you like to Ship?");
-                    int orderNum = input.nextInt() - 1; //this would be the index of arraylist
-                    while (orderNum < 0 || orderNum >= cartItems_admin.size()) {
+                    System.out.println("Which order number would you like to ship?");
+                    int orderNum = input.nextInt();
+                    while (orderNum <= 0 || orderNum > orderNum_checkout.size()) {
                         System.out.println("Invalid order number, please re-enter");
-                        orderNum = input.nextInt() - 1; //index
+                        orderNum = input.nextInt();
                     }
-                    orderNum_checkout.remove(orderNum);
-                    cartItems_admin.remove(cartItems_admin.get(orderNum));
-                    itemQuantities_admin.remove(itemQuantities_admin.get(orderNum));
-                    itemTotalPrice_admin.remove(itemTotalPrice_admin.get(orderNum));
+                    orderNum_checkout.remove(orderNum-1);
+                    cartItems_admin.remove(cartItems_admin.get(orderNum-1));
+                    itemQuantities_admin.remove(itemQuantities_admin.get(orderNum-1));
+                    itemTotalPrice_admin.remove(itemTotalPrice_admin.get(orderNum-1));
                     //
-                    cartItems_checkout.remove(cartItems_checkout.get(orderNum));
-                    itemQuantities_checkout.remove(itemQuantities_checkout.get(orderNum));
-                    itemTotalPrice_checkout.remove(itemTotalPrice_checkout.get(orderNum));
+                    cartItems_checkout.remove(cartItems_checkout.get(orderNum-1));
+                    itemQuantities_checkout.remove(itemQuantities_checkout.get(orderNum-1));
+                    itemTotalPrice_checkout.remove(itemTotalPrice_checkout.get(orderNum-1));
                     System.out.println("Order has been shipped.");
                     System.out.println("Continue shipping orders?  1. Continue  2. No, switch mode  3. Exit Shop");
                     adminChoose = input.nextInt();
@@ -433,9 +434,6 @@ public class Main {
                                     action = input.nextInt();
                                 }
                                 if (action == 1) {
-                                    cartItems.remove(cartItems.get(itemNum_toEdit));
-                                    itemQuantities.remove(itemQuantities.get(itemNum_toEdit));
-                                    itemTotalPrice.remove(itemTotalPrice.get(itemNum_toEdit));
                                     switch (cartItems.get(itemNum_toEdit)) { //adding quantity back in stock
                                         case "Sneakers":
                                             stock_1[0] = stock_1[0] + itemQuantities.get(itemNum_toEdit);
@@ -465,6 +463,9 @@ public class Main {
                                             stock_3[2] = stock_3[2] + itemQuantities.get(itemNum_toEdit);
                                             break;
                                     }
+                                    cartItems.remove(cartItems.get(itemNum_toEdit));
+                                    itemQuantities.remove(itemQuantities.get(itemNum_toEdit));
+                                    itemTotalPrice.remove(itemTotalPrice.get(itemNum_toEdit));
                                     System.out.println("Item has been deleted from cart.");
                                     System.out.println("Select next action:  1. Continue shopping  2. Edit/view cart  " +
                                             "3. Checkout  4. Switch Mode  5. Exit shop");
@@ -752,42 +753,57 @@ public class Main {
                         }
                     }
                     while (nextChoice == 3) { //are we allowing users to go back to shopping once at checking out stage
-                        double total_all = 0;
-                        System.out.println("You have: ");
-                        for (int i = 0; i < cartItems.size(); i++) {
-                            System.out.println(cartItems.get(i) + " --- " + itemQuantities.get(i) + " --- $" +
-                                    itemTotalPrice.get(i));
-                            total_all = total_all + itemTotalPrice.get(i);
-                            // copying into a new arraylist for checkout purposes
-                            cartItems_checkout.add(cartItems.get(i));
-                            itemQuantities_checkout.add(itemQuantities.get(i));
-                            itemTotalPrice_checkout.add(itemTotalPrice.get(i));
-                        }
-                        orderNum_checkout.add(cartItems.size());
-                        System.out.println("-------------------------"); //(-)*25
-                        double tax = Math.round(total_all * 0.13 * 100.0) / 100.0;
-                        System.out.println("Tax = " + total_all + " * 0.13 = $" + tax);
-                        double finalAmount = tax + total_all;
-                        System.out.println("Amount due = $" + finalAmount);
-                        System.out.println("We appreciate your prompt payment!");
-                        //removing all items in cart for next time's use
-                        for (int i = cartItems.size() - 1; i >= 0; i--) {
-                            cartItems.remove(cartItems.get(i));
-                            itemQuantities.remove(itemQuantities.get(i));
-                            itemTotalPrice.remove(itemTotalPrice.get(i));
-                        } // cart should be empty by this line
-                        System.out.println("Would you like to...  1. Switch Mode  2. Go back shopping  3. Exit Shop");
-                        nextChoice = input.nextInt();
-                        while (nextChoice < 1 || nextChoice > 3) {
-                            System.out.println("Invalid option, please re-enter");
+                        if (cartItems.size() != 0) {
+                            double total_all = 0;
+                            System.out.println("You have: ");
+                            for (int i = 0; i < cartItems.size(); i++) {
+                                System.out.println(cartItems.get(i) + " --- " + itemQuantities.get(i) + " --- $" +
+                                        itemTotalPrice.get(i));
+                                total_all = total_all + itemTotalPrice.get(i);
+                                // copying into a new arraylist for checkout purposes
+                                cartItems_checkout.add(cartItems.get(i));
+                                itemQuantities_checkout.add(itemQuantities.get(i));
+                                itemTotalPrice_checkout.add(itemTotalPrice.get(i));
+                            }
+                            orderNum_checkout.add(cartItems.size());
+                            System.out.println("-------------------------"); //(-)*25
+                            double tax = Math.round(total_all * 0.13 * 100.0) / 100.0;
+                            System.out.println("Tax = " + total_all + " * 0.13 = $" + tax);
+                            double finalAmount = tax + total_all;
+                            System.out.println("Amount due = $" + finalAmount);
+                            System.out.println("We appreciate your prompt payment!");
+                            //removing all items in cart for next time's use
+                            for (int i = cartItems.size() - 1; i >= 0; i--) {
+                                cartItems.remove(cartItems.get(i));
+                                itemQuantities.remove(itemQuantities.get(i));
+                                itemTotalPrice.remove(itemTotalPrice.get(i));
+                            } // cart should be empty by this line
+                            System.out.println("Would you like to...  1. Switch Mode  2. Go back shopping  3. Exit Shop");
                             nextChoice = input.nextInt();
+                            while (nextChoice < 1 || nextChoice > 3) {
+                                System.out.println("Invalid option, please re-enter");
+                                nextChoice = input.nextInt();
+                            }
+                            if (nextChoice == 1)
+                                nextChoice = 4;
+                            else if (nextChoice == 2)
+                                nextChoice = 1;
+                            else
+                                nextChoice = 5;
+                        } else {
+                            System.out.println("You have no items to checkout");
+                            System.out.println("Select:  1. Go shopping  2. Switch Mode  3. Exit Shop");
+                            nextChoice = input.nextInt();
+                            while (nextChoice < 1 || nextChoice > 3) {
+                                System.out.println("Invalid option, please re-enter");
+                                nextChoice = input.nextInt();
+                            }
+                            if (nextChoice == 2)
+                                nextChoice = 4;
+                            else if (nextChoice == 3)
+                                nextChoice = 5;
+
                         }
-                        if (nextChoice == 1)
-                            nextChoice = 4;
-                        else if (nextChoice == 2)
-                            nextChoice = 1;
-                        else
-                            nextChoice = 5;
                     }
                 } else if (decision == 2) {
                     decision = 1;
