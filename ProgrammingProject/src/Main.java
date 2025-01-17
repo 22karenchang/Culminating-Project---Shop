@@ -84,26 +84,29 @@ public class Main {
                         int numOfTimes = 1;
                         System.out.println("Order #" + (i+1));
                         while (numOfTimes <= orderNum_checkout.get(i)) {
-                            //j is index
-                            if (j < cartItems_checkout.size()) {
+                            if (j < cartItems_admin.size()) {
                                 System.out.println(cartItems_admin.get(j) + " --- "
                                         + itemQuantities_admin.get(j) + " purchased --- $" +
                                         itemTotalPrice_admin.get(j));
-                                j++; numOfTimes++;
+                                j++;
+                                numOfTimes++;
                             }
-                            // can add another arraylist for TotalOfEachOrder (if have time)
                         }
                     }
                     System.out.println("Which order number would you like to Ship?");
                     int orderNum = input.nextInt() - 1; //this would be the index of arraylist
                     while (orderNum < 0 || orderNum >= cartItems_admin.size()) {
                         System.out.println("Invalid order number, please re-enter");
-                        orderNum = input.nextInt() - 1;
+                        orderNum = input.nextInt() - 1; //index
                     }
                     orderNum_checkout.remove(orderNum);
                     cartItems_admin.remove(cartItems_admin.get(orderNum));
                     itemQuantities_admin.remove(itemQuantities_admin.get(orderNum));
                     itemTotalPrice_admin.remove(itemTotalPrice_admin.get(orderNum));
+                    //
+                    cartItems_checkout.remove(cartItems_checkout.get(orderNum));
+                    itemQuantities_checkout.remove(itemQuantities_checkout.get(orderNum));
+                    itemTotalPrice_checkout.remove(itemTotalPrice_checkout.get(orderNum));
                     System.out.println("Order has been shipped.");
                     System.out.println("Continue shipping orders?  1. Continue  2. No, switch mode  3. Exit Shop");
                     adminChoose = input.nextInt();
@@ -769,9 +772,9 @@ public class Main {
                         System.out.println("We appreciate your prompt payment!");
                         //removing all items in cart for next time's use
                         for (int i = cartItems.size() - 1; i >= 0; i--) {
-                            cartItems.remove(i);
-                            itemQuantities.remove(i);
-                            itemTotalPrice.remove(i);
+                            cartItems.remove(cartItems.get(i));
+                            itemQuantities.remove(itemQuantities.get(i));
+                            itemTotalPrice.remove(itemTotalPrice.get(i));
                         } // cart should be empty by this line
                         System.out.println("Would you like to...  1. Switch Mode  2. Go back shopping  3. Exit Shop");
                         nextChoice = input.nextInt();
@@ -809,9 +812,9 @@ public class Main {
                         System.out.println("We appreciate your prompt payment!");
                         //removing all items in cart for next time's use
                         for (int i = cartItems.size() - 1; i >= 0; i--) {
-                            cartItems.remove(i);
-                            itemQuantities.remove(i);
-                            itemTotalPrice.remove(i);
+                            cartItems.remove(cartItems.get(i));
+                            itemQuantities.remove(itemQuantities.get(i));
+                            itemTotalPrice.remove(itemTotalPrice.get(i));
                         } // cart should be empty by this line
                         System.out.println("Would you like to...  1. Switch Mode  2. Go back shopping  3. Exit Shop");
                         nextChoice = input.nextInt();
