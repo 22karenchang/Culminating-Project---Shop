@@ -12,6 +12,10 @@ public class Main {
         ArrayList<String> cartItems_admin = new ArrayList<String>(); // all items bought stored here
         ArrayList<Integer> itemQuantities_admin = new ArrayList<>(); // each item's quantity stored here
         ArrayList<Integer> itemTotalPrice_admin = new ArrayList<>(); // each item's total stored here
+        ArrayList<Integer> orderNum_checkout = new ArrayList<Integer>(); // for order # in admin mode
+        ArrayList<String> cartItems_checkout = new ArrayList<String>();
+        ArrayList<Integer> itemQuantities_checkout = new ArrayList<>();
+        ArrayList<Integer> itemTotalPrice_checkout = new ArrayList<>();
         //set up for User Mode -----------------------------------------------------------------------
         String[] categories = {"Footwear", "Makeup", "Accessories"};
         String[] products_1 = {"Sneakers", "Boots", "Sandals"};
@@ -50,10 +54,10 @@ public class Main {
                 password = input.next();
             }
             System.out.println("You have successfully logged in."); // means password is right
-            for (int i = 0; i < cartItems.size(); i++) {
-                cartItems_admin.add(cartItems.get(i));
-                itemQuantities_admin.add(itemQuantities.get(i));
-                itemTotalPrice_admin.add(itemTotalPrice.get(i));
+            for (int i = 0; i < cartItems_checkout.size(); i++) {
+                cartItems_admin.add(cartItems_checkout.get(i));
+                itemQuantities_admin.add(itemQuantities_checkout.get(i));
+                itemTotalPrice_admin.add(itemTotalPrice_checkout.get(i));
             }
             boolean continueShipping = true; int adminChoose = 0;
             while (continueShipping) {
@@ -75,9 +79,20 @@ public class Main {
                     }
                 }
                 else {
-                    for (int i = 0; i < cartItems_admin.size(); i++) {
-                        System.out.println((i + 1) + ". " + cartItems_admin.get(i) + " --- "
-                                + itemQuantities_admin.get(i) + " purchased --- $" + itemTotalPrice_admin.get(i));
+                    int j = 0;
+                    for (int i = 0; i < orderNum_checkout.size(); i++) {
+                        int numOfTimes = 1;
+                        System.out.println("Order #" + (i+1));
+                        while (numOfTimes <= orderNum_checkout.get(i)) {
+                            //j is index
+                            if (j < cartItems_checkout.size()) {
+                                System.out.println(cartItems_admin.get(j) + " --- "
+                                        + itemQuantities_admin.get(j) + " purchased --- $" +
+                                        itemTotalPrice_admin.get(j));
+                                j++; numOfTimes++;
+                            }
+                            // can add another arraylist for TotalOfEachOrder (if have time)
+                        }
                     }
                     System.out.println("Which order number would you like to Ship?");
                     int orderNum = input.nextInt() - 1; //this would be the index of arraylist
@@ -85,10 +100,11 @@ public class Main {
                         System.out.println("Invalid order number, please re-enter");
                         orderNum = input.nextInt() - 1;
                     }
+                    orderNum_checkout.remove(orderNum);
                     cartItems_admin.remove(cartItems_admin.get(orderNum));
                     itemQuantities_admin.remove(itemQuantities_admin.get(orderNum));
                     itemTotalPrice_admin.remove(itemTotalPrice_admin.get(orderNum));
-                    System.out.println("Order #" + (orderNum + 1) + " has been shipped.");
+                    System.out.println("Order has been shipped.");
                     System.out.println("Continue shipping orders?  1. Continue  2. No, switch mode  3. Exit Shop");
                     adminChoose = input.nextInt();
                     if (adminChoose == 2) {
@@ -117,7 +133,7 @@ public class Main {
                 }
                 if (decision == 1) {
                     if (nextChoice == 1) {
-                        System.out.println("Here are our three categories, please select: ");
+                        System.out.println("Here are our three categories please select: ");
                         for (int i = 0; i < categories.length; i++) {
                             System.out.println(i + 1 + ". " + categories[i]);
                         }
@@ -361,7 +377,7 @@ public class Main {
                                     break; //break for accessory category
                             }
                             System.out.println("Please choose what you want to do next...");
-                            System.out.println("1. Continue shopping\t2. Edit/view cart\t3 Checkout"
+                            System.out.println("1. Continue shopping\t2. Edit/view cart\t3. Checkout"
                                     + "\t4. Switch Mode\t5. Exit shop");
                             nextChoice = input.nextInt();
                             while (nextChoice < 1 || nextChoice > 4) {
@@ -739,14 +755,36 @@ public class Main {
                             System.out.println(cartItems.get(i) + " --- " + itemQuantities.get(i) + " --- $" +
                                     itemTotalPrice.get(i));
                             total_all = total_all + itemTotalPrice.get(i);
+                            // copying into a new arraylist for checkout purposes
+                            cartItems_checkout.add(cartItems.get(i));
+                            itemQuantities_checkout.add(itemQuantities.get(i));
+                            itemTotalPrice_checkout.add(itemTotalPrice.get(i));
                         }
+                        orderNum_checkout.add(cartItems.size());
                         System.out.println("-------------------------"); //(-)*25
                         double tax = Math.round(total_all * 0.13 * 100.0) / 100.0;
                         System.out.println("Tax = " + total_all + " * 0.13 = $" + tax);
                         double finalAmount = tax + total_all;
                         System.out.println("Amount due = $" + finalAmount);
                         System.out.println("We appreciate your prompt payment!");
-                        nextChoice = 5;
+                        //removing all items in cart for next time's use
+                        for (int i = cartItems.size() - 1; i >= 0; i--) {
+                            cartItems.remove(i);
+                            itemQuantities.remove(i);
+                            itemTotalPrice.remove(i);
+                        } // cart should be empty by this line
+                        System.out.println("Would you like to...  1. Switch Mode  2. Go back shopping  3. Exit Shop");
+                        nextChoice = input.nextInt();
+                        while (nextChoice < 1 || nextChoice > 3) {
+                            System.out.println("Invalid option, please re-enter");
+                            nextChoice = input.nextInt();
+                        }
+                        if (nextChoice == 1)
+                            nextChoice = 4;
+                        else if (nextChoice == 2)
+                            nextChoice = 1;
+                        else
+                            nextChoice = 5;
                     }
                 } else if (decision == 2) {
                     decision = 1;
@@ -758,14 +796,35 @@ public class Main {
                             System.out.println(cartItems.get(i) + " --- " + itemQuantities.get(i) + " --- $" +
                                     itemTotalPrice.get(i));
                             total_all = total_all + itemTotalPrice.get(i);
+                            cartItems_checkout.add(cartItems.get(i));
+                            itemQuantities_checkout.add(itemQuantities.get(i));
+                            itemTotalPrice_checkout.add(itemTotalPrice.get(i));
                         }
+                        orderNum_checkout.add(cartItems.size());
                         System.out.println("-------------------------"); //(-)*25
                         double tax = Math.round(total_all * 0.13 * 100.0) / 100.0;
                         System.out.println("Tax = " + total_all + " * 0.13 = $" + tax);
                         double finalAmount = tax + total_all;
                         System.out.println("Amount due = $" + finalAmount);
                         System.out.println("We appreciate your prompt payment!");
-                        nextChoice = 5;
+                        //removing all items in cart for next time's use
+                        for (int i = cartItems.size() - 1; i >= 0; i--) {
+                            cartItems.remove(i);
+                            itemQuantities.remove(i);
+                            itemTotalPrice.remove(i);
+                        } // cart should be empty by this line
+                        System.out.println("Would you like to...  1. Switch Mode  2. Go back shopping  3. Exit Shop");
+                        nextChoice = input.nextInt();
+                        while (nextChoice < 1 || nextChoice > 3) {
+                            System.out.println("Invalid option, please re-enter");
+                            nextChoice = input.nextInt();
+                        }
+                        if (nextChoice == 1)
+                            nextChoice = 4;
+                        else if (nextChoice == 2)
+                            nextChoice = 1;
+                        else
+                            nextChoice = 5;
                     } else {
                         System.out.println("You have no orders to checkout");
                         System.out.println("Please choose:  1. Go shopping  2. Switch Mode  3. Exit shop");
