@@ -80,7 +80,7 @@ public class Main {
                     }
                 }
                 else {
-                    int j = 0;
+                    int j = 0; // index for the arraylist
                     for (int i = 0; i < orderNum_checkout.size(); i++) {
                         int numOfTimes = 1;
                         System.out.println("Order #" + (i+1));
@@ -100,8 +100,8 @@ public class Main {
                         System.out.println("Invalid order number, please re-enter");
                         orderNum = input.nextInt();
                     }
-                    orderNum_checkout.remove(orderNum-1);
-                    cartItems_admin.remove(cartItems_admin.get(orderNum-1));
+                    orderNum_checkout.remove(orderNum-1); // must -1 to prevent IndexOutOfBounds!
+                    cartItems_admin.remove(cartItems_admin.get(orderNum-1)); // removing the order
                     itemQuantities_admin.remove(itemQuantities_admin.get(orderNum-1));
                     itemTotalPrice_admin.remove(itemTotalPrice_admin.get(orderNum-1));
                     //
@@ -821,7 +821,7 @@ public class Main {
                         }
                         orderNum_checkout.add(cartItems.size());
                         System.out.println("-------------------------"); //(-)*25
-                        double tax = Math.round(total_all * 0.13 * 100.0) / 100.0;
+                        double tax = Math.round(total_all * 0.13 * 100.0) / 100.0; //rounding to 2 decimal places
                         System.out.println("Tax = " + total_all + " * 0.13 = $" + tax);
                         double finalAmount = tax + total_all;
                         System.out.println("Amount due = $" + finalAmount);
